@@ -22,17 +22,22 @@ class sliderController {
 	}
 
 	public function addProducts() {
-		$cat;
 		$slidermodalobj = new sliderModel();
 		$p = $slidermodalobj -> upload();
 		$name = $_SESSION['user'];
 		$conn = new mysqli("localhost", "root", "", "bazaar");
 		$sql = "SELECT * FROM user WHERE Email = '$name'";
 		$result = $conn -> query($sql);
-		$userId = mysqli_fetch_array($result)[0];
-		$slidermodalobj -> submitadd($_POST['Title'], $_POST['Description'], $_POST['price'], $_POST['Category'], $p, $_POST['name'], $_POST['email'], $_POST['number'], $_POST['btime'],$userId);
+		$dataArray = mysqli_fetch_array($result);
+		$userId = $dataArray[0];
+		$email = $dataArray[1];
+		$FName = $dataArray[2];
+		$LName = $dataArray[4];
+		$mobile = $dataArray[5];
+		$slidermodalobj -> submitadd($_POST['Title'], $_POST['Description'], $_POST['price'], $_POST['Category'], $p, $FName." ".$LName, $email, $mobile, $_POST['btime'],$userId);
 		$this->redirect('index.php');
 	}
+
 
 }
 ?>

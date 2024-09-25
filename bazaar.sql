@@ -127,8 +127,15 @@ INSERT INTO `category` (`id`, `label`, `link`, `parent`, `sort`) VALUES
 (8, 'Animals', '#', 0, 0);
 
 --
--- Constraints for dumped tables
+-- Admin Table structure for table `admin`
 --
+
+Create table admin(
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` text NOT NULL,
+  `password` text NOT NULL,
+  PRIMARY KEY (`id`)
+);
 
 --
 -- Relationships for table `product`

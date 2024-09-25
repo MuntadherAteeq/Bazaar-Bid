@@ -77,26 +77,6 @@ function buildOptions($parent, $category) {
 					 
 					<hr />
 					<div class="control-group">
-						<label class="control-label" for="first_name">Name</label>
-						<div class="controls">
-							<input type="text" required class="form-control" name="name" id="user_first_name" />
-						</div>
-					</div>
-					
-					<div class="control-group">
-						<label class="control-label" for="email">Username</label>
-						<div class="controls">
-							<input type="text" required class="form-control" name="email" id="user_email" />
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label" for="text">Mobile</label>
-						<div class="controls">
-							<input type="tel" required class="form-control" name="number" id="user_number" />
-						</div>
-					</div>
-					<br />
-					<div class="control-group">
 						<div class="controls">
 							<input id="submitButton" type="submit" class="btn btn-primary btn-lg btn-block" name="submit" value="Submit Now!"/>
 						</div>

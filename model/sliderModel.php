@@ -63,6 +63,7 @@ class sliderModel {
 
 	}
 
+	
 	public function submitadd($adt, $des, $price, $cat, $img, $name, $email, $mob, $btime,$uid) {
 		$this->openDB();
 		$stmt = $this->conn->prepare("INSERT INTO product(title, descri, price, cid, image, name, email, mob, btime, uid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
