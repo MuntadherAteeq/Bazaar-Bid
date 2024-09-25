@@ -24,10 +24,17 @@ class singupModel {
 
 	public function singup($email, $fname, $lname, $mno, $pass) {
 
+		// validate email 
+		if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			echo "<script type='text/javascript'>alert('Invalid Email')</script>";
+			// redirect to home page
+			return false;
+	   }
+
 		$ccn = mysqli_connect("localhost","root","","bazaar")or die("connecton error");
 		mysqli_select_db($ccn,"bazaar")or die("selection error");
 			
-		$sql = "SELECT * FROM details WHERE Email= '$email'";
+		$sql = "SELECT * FROM user WHERE Email= '$email'";
 		$rs = mysqli_query($ccn,$sql) or die("query error");
 			
 
@@ -51,7 +58,7 @@ class singupModel {
 
 
 		if($sig==0){
-			$sqll = "INSERT INTO details (Email, FirstName, LastName, Mob, password) VALUES ('$email', '$fname', '$lname', '$mno', '$pass')";
+			$sqll = "INSERT INTO user (Email, FirstName, LastName, Mob, password) VALUES ('$email', '$fname', '$lname', '$mno', '$pass')";
 			$rs = mysqli_query($ccn,$sqll) or die("Insertion error");		
 			$homeUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . '/';
 			echo "<script type='text/javascript'>alert('Successfull Signup , Please Login To continue ');window.location.href = '$homeUrl';</script>";
@@ -67,7 +74,7 @@ class singupModel {
 	public function login($email, $pass) {
 		$this -> openDB();
 		
-		$stmt = $this -> conn -> prepare("SELECT * FROM details WHERE Email=? AND password=?");
+		$stmt = $this -> conn -> prepare("SELECT * FROM user WHERE Email=? AND password=?");
 
 		$stmt -> bind_param("ss", $email, $pass);
 		if ($stmt -> execute()) {
@@ -78,55 +85,6 @@ class singupModel {
 		} else {
 			return FALSE;
 		}
-	}
-
-
-	// ! Future Work
-
-	//	public function singupA($email, $fname, $lname, $mno, $pass) {
-		// $this -> openDB();
-// 
-		// $stmt = $this -> conn -> prepare("SELECT * FROM admin WHERE Email=?");
-// 
-		// $stmt -> bind_param("s", $email);
-		// $stmt -> execute();
-		// $sig = 0;
-// 
-		// while ($res = $stmt -> get_result()) {
-			// if ($name == $res["Name"])
-				// $sig = 1;
-// 
-		// }
-// 
-		// $stmt = $this -> conn -> prepare("INSERT INTO admin(Email, FirstName, LastName, MOb, password)VALUES (?,?,?,?,?)");
-// 
-		// $stmt -> bind_param("sssss", $email, $fname, $lname, $mno, $pass);
-// 
-		// if ($sig == 0) {
-			// $stmt -> execute();
-			// $res = $stmt -> get_result();
-			// $this -> closeDB();
-		// } else {
-			// echo "<script type='text/javascript'>alert('Already Exist!')</script>";
-			// include 'view/home.php';
-		// }
-// 
-	// }
-// 
-	public function loginA($email, $pass) {
-		$this -> openDB();
-		$stmt = $this -> conn -> prepare("SELECT * FROM admin WHERE Email=? AND password=?");
-
-		$stmt -> bind_param("ss", $email, $pass);
-		if ($stmt -> execute()) {
-			$res = $stmt -> get_result();
-			$this -> closeDB();
-			return $res -> fetch_object();
-
-		} else {
-			return FALSE;
-		}
-
 	}
 
 	public function logout() {

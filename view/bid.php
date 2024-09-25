@@ -42,11 +42,12 @@ else {
 						<dd>
 							<h4><?php echo $product -> price; ?></h4>
 						</dd>
-						<dt>
+
+						<dt style="font-size: x-large;">
 							<h4><b>Time Remaining:</b></h4>
 						</dt>
 												
-						<dd class="clock-builder-output"></dd><hr>
+						<dd class="clock-builder-output"></dd>
 						<?php $con = mysqli_connect("localhost", "root", "","bazaar");
 						if (!$con) {
 							die('could not connect : ');
@@ -61,7 +62,6 @@ else {
 						$t = strtotime($btime);
 					?>
 
-							
 						<!-- clock -->								
 
 						<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -111,8 +111,48 @@ else {
 
 												
 													
-						<!-- end clock -->					
-						
+						<!-- end clock -->	
+						 
+						<style>
+							.y-center {
+								display: flex;
+								align-items: center;
+							}
+							.y-center dd{
+								margin-left: 20px !important;
+								font-size: x-large;
+							}
+						</style>
+						<div class="y-center">
+<?php
+
+// get the last pid infor mation
+$id = $_REQUEST['pid'];
+$con = mysqli_connect("localhost", "root", "","bazaar");
+mysqli_select_db($con,"bazaar");
+
+$query = "SELECT btime FROM product WHERE pid=" . $id;
+$result = mysqli_query($con, $query);
+$row = mysqli_fetch_array($result);
+$ptime = strtotime($row['btime']);
+$currentTime = time();
+if ($currentTime > $ptime) {
+	$sql = "SELECT * from bid WHERE pid=" . $id . " ORDER BY price desc limit 1";
+$res = mysqli_query($con, $sql);
+
+			$row = mysqli_fetch_array($res);
+			if ($row) {
+				echo "<dt><h4><b>Winner :</b></h4></dt>";
+				echo "<dd font-size: x-large;>" . $row["Name"] . "</dd>";
+			} else {
+				echo "<dt><h4><b>Winner : </b></h4></dt>";
+				echo "<dd> No one Contribute </dd>";
+			}	
+}
+
+?>
+						</div>
+						<hr>
 					
 					<dt><form method="post">
 						<input name="bAmount" type="number" required class="form-control" placeholder="Bidding Amount"></dt> 
@@ -162,6 +202,28 @@ else {
 								$amount = $_REQUEST['bAmount'];
 								$name = $_SESSION['user'];
 								$id = $_REQUEST['pid'];
+
+								// disallow user to bid on his own product
+								$sql = 'SELECT uid FROM product WHERE pid=' . $id;
+								$result = $conn -> query($sql); 
+								$userId = mysqli_fetch_array($result)[0];
+								$sql = 'SELECT Email FROM user WHERE uid=' . $userId;
+								$result = $conn -> query($sql);
+								$userEmail = mysqli_fetch_array($result)[0];
+
+								if ($userEmail == $_SESSION['user']) {
+									echo "<script> type=\"text/javascript\">alert(\" You can not bid on your own product \")</script>";
+									
+								}else {
+
+
+
+								// if ($userEmail == $_SESSION['user']) {
+								// 	echo'<script> type="text/javascript">alert("You can not bid on your own product")</script>';
+								// }
+								 
+									
+								
 															
 								
 								$sql = "INSERT INTO bid (Name, Price, pid) VALUES ('$name', '$amount', '$id')";
@@ -180,10 +242,12 @@ else {
 								else {
 									echo "<script type='text/javascript'>alert('Already Exist!')</script>";
 								}
-
+								// if 
+							}
 								}else{
 									echo "<script type='text/javascript'>alert('Amount is executed the Maximum Limit')</script>";
 								}
+								
 
 								}
 								else {
@@ -199,6 +263,7 @@ else {
 						else {
 							echo "<script type='text/javascript'>alert('Bidding time is up')</script>";
 						}
+						
 					}
 					?>  
 					<dt>

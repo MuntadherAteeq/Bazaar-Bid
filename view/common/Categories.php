@@ -1,9 +1,7 @@
 <div class="col-md-2">
 	<div class="list-group">
-		<a class="list-group-item"><h1>Category</h1></a>
-
-		<!-- <a href="products.php?op=list&cat=3" class='list-group-item'>Cars
-		<span class='badge'>3</span></a> -->
+		
+		<a class="list-group-item" ><h1 class="cat-title">Category</h1></a>
  <?php
 
 		function buildcategory($parent) {
@@ -45,36 +43,5 @@
 		echo buildcategory(0);
 		// ?>
 		
-
-		<?php
-
-		/*
-		 // category builder function, parentId 0 is the root
-		 function buildcategory($parent, $category) {
-		 $html = "";
-		 if (isset($category['parents'][$parent])) {
-		 $html .= "
-		 <ul>\n";
-		 foreach ($category['parents'][$parent] as $itemId) {
-		 if (!isset($category['parents'][$itemId])) {
-		 $html .= "<li>\n  <a href='" . $category['items'][$itemId]['link'] . "'>" . $category['items'][$itemId]['label'] . "</a>\n</li> \n";
-		 }
-		 if (isset($category['parents'][$itemId])) {
-		 $html .= "
-		 <li>\n  <a href='" . $category['items'][$itemId]['link'] . "'>" . $category['items'][$itemId]['label'] . "</a> \n";
-		 $html .= buildcategory($itemId, $category);
-		 $html .= "</li> \n";
-		 }
-		 }
-		 $html .= "</ul> \n";
-		 }
-		 return $html;
-		 }
-
-		 echo buildcategory(0, $category);
-
-		 *
-		 */
-		//?> 
 	</div>
 </div>

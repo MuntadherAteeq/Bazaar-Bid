@@ -50,6 +50,7 @@ class sliderModel {
 			// Check if $uploadOk is set to 0 by an error
 		if ($uploadOk == 0) {
 			echo "<script type='text/javascript'>alert('Sorry, your file was not uploaded.')</script>";
+			echo "<script type='text/javascript'>window.location.href = 'index.php';</script>";
 			// if everything is ok, try to upload file
 		} else {
 			if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
@@ -62,10 +63,10 @@ class sliderModel {
 
 	}
 
-	public function submitadd($adt, $des, $price, $cat, $img, $name, $email, $mob, $btime) {
+	public function submitadd($adt, $des, $price, $cat, $img, $name, $email, $mob, $btime,$uid) {
 		$this->openDB();
-		$stmt = $this->conn->prepare("INSERT INTO product(title, descri, price, cid, image, name, email, mob, btime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-		$stmt->bind_param("ssiisssss", $adt, $des, $price, $cat, $img, $name, $email, $mob, $btime);
+		$stmt = $this->conn->prepare("INSERT INTO product(title, descri, price, cid, image, name, email, mob, btime, uid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		$stmt->bind_param("ssiisssssi", $adt, $des, $price, $cat, $img, $name, $email, $mob, $btime,$uid);
 	
 		if ($stmt->execute()) {
 			echo "add uploaded successfully";

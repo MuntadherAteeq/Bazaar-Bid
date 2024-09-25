@@ -23,7 +23,7 @@
 
 							<div style="margin-bottom: 25px" class="input-group">
 								<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-								<input id="login-username" required name="user" type="text" class="form-control" name="user" value="" placeholder="username or email">
+								<input id="login-username" required name="user" type="text" class="form-control" name="user" value="" placeholder="email">
 							</div>
 
 							<div style="margin-bottom: 25px" class="input-group">
@@ -66,9 +66,9 @@
 						<form id="signupform" class="form-horizontal" role="form" method="post" action="user.php">
 
 							<div class="form-group">
-								<label for="email" class="col-md-3 control-label">Username:</label>
+								<label for="email" class="col-md-3 control-label">Email :</label>
 								<div class="col-md-9">
-									<input type="text" required class="form-control" name="email" placeholder="username">
+									<input type="email" required class="form-control" name="email" placeholder="username">
 								</div>
 							</div>
 
