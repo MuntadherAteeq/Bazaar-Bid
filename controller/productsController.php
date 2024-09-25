@@ -63,6 +63,14 @@ class productsController {
 		$pid = $_GET['pid'];
 		$productmodalobj = new productsModel();
 		$product = $productmodalobj -> getProduct($pid);
+		$con = new mysqli("localhost", "root", "", "bazaar");
+		$sql = "SELECT * FROM `user` WHERE `uid` = $product->uid";
+		$user = mysqli_execute_query( $con, $sql );
+		$dataArray = mysqli_fetch_array($user);
+		$userId = $dataArray[0];
+		$email = $dataArray[1];
+		$FName = $dataArray[2];
+		$mobile = $dataArray[4];
 		include 'view/product.php';
 	}
 	

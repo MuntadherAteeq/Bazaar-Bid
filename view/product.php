@@ -67,19 +67,19 @@ require_once 'config.php';
 							<h4><b>Owner:</b></h4>
 						</dt>
 						<dd>
-							<h4><?php echo $product -> name; ?></h4>
+							<h4><?php echo $FName; ?></h4>
 						</dd>
 						<dt>
 							<h4><b>Contect No.:</b></h4>
 						</dt>
 						<dd>
-							<h4><?php echo $product -> mob; ?></h4>
+							<h4><?php echo $mobile; ?></h4>
 						</dd>
 						<dt>
 							<h4><b>Email:</b></h4>
 						</dt>
 						<dd>
-							<h4><?php echo $product -> email; ?></h4>
+							<h4><?php echo $email; ?></h4>
 						</dd>
 						
 					</dl>

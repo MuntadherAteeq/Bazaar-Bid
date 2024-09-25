@@ -64,10 +64,10 @@ class sliderModel {
 	}
 
 	
-	public function submitadd($adt, $des, $price, $cat, $img, $name, $email, $mob, $btime,$uid) {
+	public function submitadd($adt, $des, $price, $cat, $img, $btime,$uid) {
 		$this->openDB();
-		$stmt = $this->conn->prepare("INSERT INTO product(title, descri, price, cid, image, name, email, mob, btime, uid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-		$stmt->bind_param("ssiisssssi", $adt, $des, $price, $cat, $img, $name, $email, $mob, $btime,$uid);
+		$stmt = $this->conn->prepare("INSERT INTO product(title, descri, price, cid, image, btime, uid) VALUES (?, ?, ?, ?, ?, ?, ?)");
+		$stmt->bind_param("ssiissi", $adt, $des, $price, $cat, $img, $btime,$uid);
 	
 		if ($stmt->execute()) {
 			echo "add uploaded successfully";
