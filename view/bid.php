@@ -215,20 +215,9 @@ $res = mysqli_query($con, $sql);
 									echo "<script> type=\"text/javascript\">alert(\" You can not bid on your own product \")</script>";
 									
 								}else {
-
-
-
-								// if ($userEmail == $_SESSION['user']) {
-								// 	echo'<script> type="text/javascript">alert("You can not bid on your own product")</script>';
-								// }
-								 
-									
-								
 															
 								
 								$sql = "INSERT INTO bid (Name, Price, pid) VALUES ('$name', '$amount', '$id')";
-								
-		
 								
 		
 								if ($sig == 0) {
