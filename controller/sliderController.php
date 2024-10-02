@@ -34,7 +34,8 @@ class sliderController {
 		$FName = $dataArray[2];
 		$LName = $dataArray[4];
 		$mobile = $dataArray[5];
-		$slidermodalobj -> submitadd($_POST['Title'], $_POST['Description'], $_POST['price'], $_POST['Category'], $p, $FName." ".$LName, $email, $mobile, $_POST['btime'],$userId);
+		echo "<script>alert(\" $userId \")</script>";
+		$slidermodalobj -> submitadd($_POST['Title'], $_POST['Description'], $_POST['price'], $_POST['Category'], $p, $_POST['btime'],$userId);
 		$this->redirect('index.php');
 	}
 

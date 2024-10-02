@@ -31,9 +31,6 @@ CREATE TABLE IF NOT EXISTS `product` (
   `btime` datetime NOT NULL,
   `cid` int(11) NOT NULL,
   `image` text NOT NULL,
-  `name` text NOT NULL,
-  `email` text NOT NULL,
-  `mob` text NOT NULL,
   `uid` int(11) NOT NULL, 
   PRIMARY KEY (`pid`),
   KEY `cid` (`cid`),
@@ -44,8 +41,8 @@ CREATE TABLE IF NOT EXISTS `product` (
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`pid`, `title`, `descri`, `price`, `btime`, `cid`, `image`, `name`, `email`, `mob`,`uid`) VALUES
-(1, 'Red Car', 'Sport Racing Car', 89499, '2025-12-31 00:00:00', 5, 'assets/redcar.jpeg', 'Alex', 'alex123@hotmail.com', '46852325',1);
+INSERT INTO `product` (`pid`, `title`, `descri`, `price`, `btime`, `cid`, `image`,`uid`) VALUES
+(1, 'Red Car', 'Sport Racing Car', 89499, '2025-12-31 00:00:00', 5, 'assets/redcar.jpeg',1);
 
 
 -- --------------------------------------------------------
