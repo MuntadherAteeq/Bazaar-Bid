@@ -21,11 +21,6 @@
   <a href="index.php"><h1 class="style2" style="font-family:Georgia, 'Times New Roman', Times, serif">Administrator</h1></a>
   <p>&nbsp;</p>
   <h1>
-  <?php 
-$admin = $_SESSION["email"];
-echo $admin;
-?>
-
   </h1>
   <form id="form1" name="form1" method="post" action="">
   	
