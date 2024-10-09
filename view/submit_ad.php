@@ -35,7 +35,7 @@ function buildOptions($parent, $category) {
 					<div class="control-group">
 						<label class="control-label" for="ad_title">Ad Title</label>
 						<div class="controls">
-							<input type="text" required id="user_ad_title" class="form-control" name="Title" maxlength="15" />
+							<input type="text" required id="user_ad_title" class="form-control" name="Title" maxlength="25" />
 						</div>
 					</div>
 					<div class="control-group">
