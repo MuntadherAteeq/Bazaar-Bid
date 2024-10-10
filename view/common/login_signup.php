@@ -11,9 +11,6 @@
 							<div class="panel-title">
 								Sign In
 							</div>
-							<div style="float:right; font-size: 100%; position: relative; top:-10px">
-								User
-							</div>
 						</div>
 						<div style="padding-top:30px" class="panel-body" >
 
@@ -44,6 +41,11 @@
 									<div style="border-top: 1px solid#888; padding-top:15px; font-size:85%" >
 										Don't have an account!
 										<a href="#" onClick="$('#loginbox').hide(); $('#signupbox').show()"> Sign Up Here </a>
+									</div>
+									<div style="font-size:85%">
+										Go to Admin page 
+										<a href="./admin" > Here </a>
+
 									</div>
 								</div>
 							</div>

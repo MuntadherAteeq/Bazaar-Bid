@@ -1,5 +1,40 @@
 <?php
 
+function checkUserExist($id){
+  $conn = new mysqli("localhost", "root", "", "bazaar");
+  $sql = 'SELECT * FROM user WHERE uid = ?';
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param('i', $id);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  if ($result->num_rows == 0) {
+      echo "<script>alert('User not found')</script>";
+      return false;
+  }
+  $conn->close();
+  $stmt->close();
+  echo "<script>alert('User Deleted')</script>";
+  return true;
+}
+function checkProductExist($pid){
+  $conn = new mysqli("localhost", "root", "", "bazaar");
+  $sql = 'SELECT * FROM product WHERE pid = ?';
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param('i', $_POST['pid']);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  if ($result->num_rows == 0) {
+      echo "<script>alert('Product not found')</script>";
+      return false;
+  }
+  $conn->close();
+  $stmt->close();
+  echo "<script>alert('Product Deleted')</script>";
+  return true;
+}
+
+
+
 session_start();
 $isAuth = checkSession() || checkPost();
 
@@ -55,6 +90,7 @@ function checkPost(){
                 return true;
             }
         }
+        echo "<script>alert('Invalid username or password')</script>";
         $stmt->close();
         $con->close();
     }
@@ -144,6 +180,8 @@ if (isset($_POST['dltpr'])) {
     echo '<div style="width:49%; float:left;"><h2>Product Table</h2>';
     $id = $_POST['pid'];
 
+    checkProductExist($id);
+
     // Delete all bids associated with the product
     $sql = "DELETE FROM bid WHERE pid=?";
     $stmt = $conn->prepare($sql);
@@ -185,9 +223,14 @@ if (isset($_POST['dltpr'])) {
 //--------------------delete user----------------------
 
 elseif (isset($_POST['dltuser'])) {
+  try{
+
+    // get the user  by id
+    
+    
     echo '<div style="width=49%; float:left;"><h2>User Table</h2>';
     $id = $_POST['uid'];
-
+    checkUserExist($id);
     // Delete all bids associated with the user's products
     $sql = "DELETE FROM bid WHERE pid IN (SELECT pid FROM product WHERE uid=?)";
     $stmt = $conn->prepare($sql);
@@ -205,11 +248,11 @@ elseif (isset($_POST['dltuser'])) {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();
-
+    
     $sql = "SELECT uid, Email, password FROM user ORDER BY uid";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
-        echo '
+      echo '
         <table class="table table-striped table-bordered table-hover table-condensed" align="center" style="width:50%">
         <tr class="info">
         <th>ID</th>
@@ -220,15 +263,18 @@ elseif (isset($_POST['dltuser'])) {
         while ($row = $result->fetch_assoc()) {
             echo "
             <tr>
-                <td>" . $row["uid"] . "</td><td>" . $row["Email"] . "</td><td>" . $row["password"] . "</td>
+            <td>" . $row["uid"] . "</td><td>" . $row["Email"] . "</td><td>" . $row["password"] . "</td>
             </tr>";
+          }
+          
+          echo "</table></div>";
+        } else {
+          echo "0 results";
         }
-
-        echo "</table></div>";
-    } else {
-        echo "0 results";
-    }
-    $stmt->close();
+        $stmt->close();
+      }catch(Exception $e){
+        echo "<script>alert('Error')</script>";
+      }
 }
 
 //-----------------------update bid time------------------------
@@ -236,6 +282,7 @@ elseif (isset($_POST['dltuser'])) {
 elseif (isset($_POST['btime'])) {
     echo '<div style="width:49%; float:left;"><h2>Product Table</h2>';
     $id = $_POST['prid'];
+    checkProductExist($id);
     $btime = $_POST['bidtime'];    
     
     $sql = "UPDATE product SET btime=? WHERE pid=?";

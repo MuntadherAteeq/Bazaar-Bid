@@ -134,6 +134,7 @@ Create table admin(
   PRIMARY KEY (`id`)
 );
 
+INSERT INTO `admin` (`id`, `username`, `password`) VALUES (NULL, 'admin', 'admin');
 --
 -- Relationships for table `product`
 --
