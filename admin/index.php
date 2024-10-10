@@ -143,6 +143,14 @@ if ($conn->connect_error) {
 if (isset($_POST['dltpr'])) {
     echo '<div style="width:49%; float:left;"><h2>Product Table</h2>';
     $id = $_POST['pid'];
+
+    // Delete all bids associated with the product
+    $sql = "DELETE FROM bid WHERE pid=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+
+    // Delete the product
     $sql = "DELETE FROM product WHERE pid=?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
