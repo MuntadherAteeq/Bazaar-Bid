@@ -8,28 +8,24 @@ function checkUserExist($id){
   $stmt->execute();
   $result = $stmt->get_result();
   if ($result->num_rows == 0) {
-      echo "<script>alert('User not found')</script>";
       return false;
   }
   $conn->close();
   $stmt->close();
-  echo "<script>alert('User Deleted')</script>";
   return true;
 }
 function checkProductExist($pid){
   $conn = new mysqli("localhost", "root", "", "bazaar");
   $sql = 'SELECT * FROM product WHERE pid = ?';
   $stmt = $conn->prepare($sql);
-  $stmt->bind_param('i', $_POST['pid']);
+  $stmt->bind_param('i', $pid);
   $stmt->execute();
   $result = $stmt->get_result();
   if ($result->num_rows == 0) {
-      echo "<script>alert('Product not found')</script>";
       return false;
   }
   $conn->close();
   $stmt->close();
-  echo "<script>alert('Product Deleted')</script>";
   return true;
 }
 
@@ -180,7 +176,9 @@ if (isset($_POST['dltpr'])) {
     echo '<div style="width:49%; float:left;"><h2>Product Table</h2>';
     $id = $_POST['pid'];
 
-    checkProductExist($id);
+    if (checkProductExist($id)) {
+      echo "<script>alert('Product does not exist')</script>";
+    }
 
     // Delete all bids associated with the product
     $sql = "DELETE FROM bid WHERE pid=?";
@@ -230,7 +228,10 @@ elseif (isset($_POST['dltuser'])) {
     
     echo '<div style="width=49%; float:left;"><h2>User Table</h2>';
     $id = $_POST['uid'];
-    checkUserExist($id);
+    if (checkUserExist($id)) {
+        echo "<script>alert('User does not exist')</script>";
+        return;
+    }
     // Delete all bids associated with the user's products
     $sql = "DELETE FROM bid WHERE pid IN (SELECT pid FROM product WHERE uid=?)";
     $stmt = $conn->prepare($sql);
@@ -310,6 +311,7 @@ elseif (isset($_POST['btime'])) {
         }
 
         echo "</table></div>";
+        echo "<script>alert('Time updated successfully')</script>";
     } else {
         echo "0 results";
     }
