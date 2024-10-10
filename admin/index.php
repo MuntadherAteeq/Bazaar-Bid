@@ -1,65 +1,95 @@
 <?php
 
 session_start();
+$isAuth = checkSession() || checkPost();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    // Database connection
-    $con = new mysqli("localhost", "root", "", "bazaar");
-
-    // Check connection
-    if ($con->connect_error) {
-        die("Connection failed: " . $con->connect_error);
-    }
-
-    // Prepare and execute the SQL query
-    $sql = "SELECT username , password FROM admin WHERE username = ?";
-    $stmt = $con->prepare($sql);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    // Check if the email and password match
-    $isValid = false;
-    while ($row = $result->fetch_assoc()) {
-        if ($row['username'] === $username && $row['password'] === $password) {
-            $isValid = true;
-            break;
+function checkSession(){
+    if (isset($_SESSION["username"]) && isset($_SESSION["password"])){
+        $username = $_SESSION['username'];
+        $password = $_SESSION['password'];
+        $con = new mysqli("localhost", "root", "", "bazaar");
+        if ($con->connect_error) {
+            die("Connection failed: " . $con->connect_error);
         }
+        $sql = "SELECT username, password FROM admin WHERE username = ?";
+        $stmt = $con->prepare($sql);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        while ($row = $result->fetch_assoc()) {
+            if ($row['username'] === $username && $row['password'] === $password) {
+                $stmt->close();
+                $con->close();
+                return true;
+            }
+        }
+        $stmt->close();
+        $con->close();
     }
+    return false;
+}
 
-    if ($isValid) {
-        ?> 
-        
-        
-        
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+function checkPost(){
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+    
+        $con = new mysqli("localhost", "root", "", "bazaar");
+        if ($con->connect_error) {
+            die("Connection failed: " . $con->connect_error);
+        }
+    
+        $sql = "SELECT username, password FROM admin WHERE username = ?";
+        $stmt = $con->prepare($sql);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        while ($row = $result->fetch_assoc()) {
+            if ($row['username'] === $username && $row['password'] === $password) {
+                $_SESSION['username'] = $row['username'];
+                $_SESSION['password'] = $row['password'];
+                $stmt->close();
+                $con->close();
+                return true;
+            }
+        }
+        $stmt->close();
+        $con->close();
+    }
+    return false;
+}
+
+if ($isAuth) {
+    ?> 
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <link href="../view/css/bootstrap.min.css" rel="stylesheet">
 <script src="../view/js/jquery.min.js"></script>
 <script src="../view/js/bootstrap.min.js"></script>
 <style>
-	table, th, td {
-
-		font-family: Georgia, 'Times New Roman', Times, serif;
-		font-style:italic;
-		border: 2px solid black;
-		padding: 5px;
-	}
-		</style>
+    table, th, td {
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        font-style: italic;
+        border: 2px solid black;
+        padding: 5px;
+    }
+</style>
 </head>
 
 <body>
 <div align="center">
   <a href="index.php"><h1 class="style2" style="font-family:Georgia, 'Times New Roman', Times, serif">Administrator</h1></a>
   <p>&nbsp;</p>
-  <h1>
-  </h1>
+  
+<div class="col-sm-12 controls" style="margin-top: 10px;">
+    <form action="logout.php" method="post">
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+</div>
   <form id="form1" name="form1" method="post" action="">
-  	
     <table class="table table-striped table-bordered table-hover table-condensed" style="width: 50%">
       <tr>
         <th><div>Delete Product: </div></th>
@@ -93,7 +123,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           <label>Date &amp; Time:
             <input type="text" class="form-control" name="bidtime" placeholder="YYYY-MM-DD hh:mm:ss" style="width: 305px" />
            </label>
-          
         </div></th>
         <td><input class="form-control" name="btime" type="submit" id="btime" value="Update Time" /></td>
       </tr>
@@ -105,203 +134,201 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 
 $conn = new mysqli("localhost", "root", "", "bazaar");
-if ($conn -> connect_error) {
-die("Connection failed:" . $conn -> connect_error);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
 //------------------delete product----------------------
 
 if (isset($_POST['dltpr'])) {
-	echo '<div style="width:49%; float:left;"><h2>Product Table</h2>';
-	$id=$_REQUEST['pid'];
-	$sql = "DELETE FROM product WHERE pid=$id";
-	$conn -> query($sql);
-	
-	$sql = "SELECT pid,title,price,btime FROM product ORDER BY pid";
-	$result = $conn -> query($sql);
-	if ($result -> num_rows > 0) {
-	echo '
-	<table class="table table-striped table-bordered table-hover table-condensed" align="center" style="width:50%">
-	<tr class="info">
-	<th>ID</th>
-	<th>Title</th>
-	<th>Price</th>
-	<th>Bidtime</th>
-	</tr>';
+    echo '<div style="width:49%; float:left;"><h2>Product Table</h2>';
+    $id = $_POST['pid'];
+    $sql = "DELETE FROM product WHERE pid=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    
+    $sql = "SELECT pid, title, price, btime FROM product ORDER BY pid";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        echo '
+        <table class="table table-striped table-bordered table-hover table-condensed" align="center" style="width:50%">
+        <tr class="info">
+        <th>ID</th>
+        <th>Title</th>
+        <th>Price</th>
+        <th>Bidtime</th>
+        </tr>';
 
-	while ($row = $result -> fetch_assoc()) {
-	echo "
-	<tr>
-		<td>" . $row["pid"] . "</td><td>" . $row["title"] . "</td><td>" . $row["price"] . "</td><td>" . $row["btime"] . "</td>
-	</tr>";
-	}
+        while ($row = $result->fetch_assoc()) {
+            echo "
+            <tr>
+                <td>" . $row["pid"] . "</td><td>" . $row["title"] . "</td><td>" . $row["price"] . "</td><td>" . $row["btime"] . "</td>
+            </tr>";
+        }
 
-	echo "</table></div>";
-	} else {
-	echo "0 results";
-	}
+        echo "</table></div>";
+    } else {
+        echo "0 results";
+    }
+    $stmt->close();
 }
 
 //--------------------delete user----------------------
 
 elseif (isset($_POST['dltuser'])) {
-	echo '<div style="width=49%; float:left;"><h2>User Table</h2>';
-	$id=$_REQUEST['uid'];
+    echo '<div style="width=49%; float:left;"><h2>User Table</h2>';
+    $id = $_POST['uid'];
 
-	// Delete all bids associated with the user's products
-	$sql = "DELETE FROM bid WHERE pid IN (SELECT pid FROM product WHERE uid=$id)";
-	$conn->query($sql);
-	
-	// Delete all products of the user
-	$sql = "DELETE FROM product WHERE uid=$id";
-	$conn->query($sql);
-	
-	// Delete the user
-	$sql = "DELETE FROM user WHERE uid=$id";
-	$conn->query($sql);
+    // Delete all bids associated with the user's products
+    $sql = "DELETE FROM bid WHERE pid IN (SELECT pid FROM product WHERE uid=?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    
+    // Delete all products of the user
+    $sql = "DELETE FROM product WHERE uid=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    
+    // Delete the user
+    $sql = "DELETE FROM user WHERE uid=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
 
-	
-	$sql = "SELECT uid,Email,password FROM user ORDER BY uid";
-	$result = $conn -> query($sql);
-	if ($result -> num_rows > 0) {
-	echo '
-	<table class="table table-striped table-bordered table-hover table-condensed" align="center" style="width:50%">
-	<tr class="info">
-	<th>ID</th>
-	<th>Username</th>
-	<th>Password</th>	
-	</tr>';
+    $sql = "SELECT uid, Email, password FROM user ORDER BY uid";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        echo '
+        <table class="table table-striped table-bordered table-hover table-condensed" align="center" style="width:50%">
+        <tr class="info">
+        <th>ID</th>
+        <th>Username</th>
+        <th>Password</th>    
+        </tr>';
 
-	while ($row = $result -> fetch_assoc()) {
-	echo "
-	<tr>
-		<td>" . $row["uid"] . "</td><td>" . $row["Email"] . "</td><td>" . $row["password"] . "</td>
-	</tr>";
-	}
+        while ($row = $result->fetch_assoc()) {
+            echo "
+            <tr>
+                <td>" . $row["uid"] . "</td><td>" . $row["Email"] . "</td><td>" . $row["password"] . "</td>
+            </tr>";
+        }
 
-	echo "</table></div>";
-	} else {
-	echo "0 results";
-	}
-	
+        echo "</table></div>";
+    } else {
+        echo "0 results";
+    }
+    $stmt->close();
 }
 
 //-----------------------update bid time------------------------
 
-elseif (isset($_POST['btime' ])) {
-	echo '<div style="width:49%; float:left;"><h2>Product Table</h2>';
-	$id=$_REQUEST['prid'];
-	$btime=$_REQUEST['bidtime'];	
-	
-	$sql = "UPDATE product SET btime='$btime' WHERE pid=$id";
-	$result = $conn -> query($sql);
-	
-	$sql = "SELECT pid,title,price,btime FROM product ORDER BY pid";
-	$result = $conn -> query($sql);
-	if ($result -> num_rows > 0) {
-	echo '
-	<table class="table table-striped table-bordered table-hover table-condensed" align="center" style="width:50%">
-	<tr class="info">
-	<th>ID</th>
-	<th>Title</th>
-	<th>Price</th>
-	<th>Bidtime</th>
-	</tr>';
+elseif (isset($_POST['btime'])) {
+    echo '<div style="width:49%; float:left;"><h2>Product Table</h2>';
+    $id = $_POST['prid'];
+    $btime = $_POST['bidtime'];    
+    
+    $sql = "UPDATE product SET btime=? WHERE pid=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("si", $btime, $id);
+    $stmt->execute();
+    
+    $sql = "SELECT pid, title, price, btime FROM product ORDER BY pid";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        echo '
+        <table class="table table-striped table-bordered table-hover table-condensed" align="center" style="width:50%">
+        <tr class="info">
+        <th>ID</th>
+        <th>Title</th>
+        <th>Price</th>
+        <th>Bidtime</th>
+        </tr>';
 
-	while ($row = $result -> fetch_assoc()) {
-	echo "
-	<tr>
-		<td>" . $row["pid"] . "</td><td>" . $row["title"] . "</td><td>" . $row["price"] . "</td><td>" . $row["btime"] . "</td>
-	</tr>";
-	}
+        while ($row = $result->fetch_assoc()) {
+            echo "
+            <tr>
+                <td>" . $row["pid"] . "</td><td>" . $row["title"] . "</td><td>" . $row["price"] . "</td><td>" . $row["btime"] . "</td>
+            </tr>";
+        }
 
-	echo "</table></div>";
-	} else {
-	echo "0 results";
-	}
-	}
-	
-	
+        echo "</table></div>";
+    } else {
+        echo "0 results";
+    }
+    $stmt->close();
+}
+
 else {
-	
-	//--------------------------product---------------------------
-	
-	echo '<div style="width:49%; float:left;"><h2>Product Table</h2>';
-	$sql = "SELECT pid,title,price,btime FROM product ORDER BY pid";
-	$result = $conn -> query($sql);
+    //--------------------------product---------------------------
+    
+    echo '<div style="width:49%; float:left;"><h2>Product Table</h2>';
+    $sql = "SELECT pid, title, price, btime FROM product ORDER BY pid";
+    $result = $conn->query($sql);
 
-	if ($result -> num_rows > 0) {
-	echo '
-	<table class="table table-striped table-bordered table-hover table-condensed" align="center" style="width:50%">
-	<tr class="info">
-	<th>ID</th>
-	<th>Title</th>
-	<th>Price</th>
-	<th>Bidtime</th>
-	</tr>';
+    if ($result->num_rows > 0) {
+        echo '
+        <table class="table table-striped table-bordered table-hover table-condensed" align="center" style="width:50%">
+        <tr class="info">
+        <th>ID</th>
+        <th>Title</th>
+        <th>Price</th>
+        <th>Bidtime</th>
+        </tr>';
 
-	while ($row = $result -> fetch_assoc()) {
-	echo "
-	<tr>
-		<td>" . $row["pid"] . "</td><td>" . $row["title"] . "</td><td>" . $row["price"] . "</td><td>" . $row["btime"] . "</td>
-	</tr>";
-	}
+        while ($row = $result->fetch_assoc()) {
+            echo "
+            <tr>
+                <td>" . $row["pid"] . "</td><td>" . $row["title"] . "</td><td>" . $row["price"] . "</td><td>" . $row["btime"] . "</td>
+            </tr>";
+        }
 
-	echo "</table></div>";
-	} else {
-	echo "0 results";
-	}
-	
-	//------------------user----------------------------
-	
-	echo '<div style="width:49%; float:left;"><h2>User Table</h2>';
-	$sql = "SELECT uid,Email,password FROM user ORDER BY uid";
-	$result = $conn -> query($sql);
+        echo "</table></div>";
+    } else {
+        echo "0 results";
+    }
+    
+    //------------------user----------------------------
+    
+    echo '<div style="width:49%; float:left;"><h2>User Table</h2>';
+    $sql = "SELECT uid, Email, password FROM user ORDER BY uid";
+    $result = $conn->query($sql);
 
-	if ($result -> num_rows > 0) {
-	echo '
-	<table class="table table-striped table-bordered table-hover table-condensed" align="center" style="width:50%">
-	<tr class="info">
-	<th>ID</th>
-	<th>Username</th>
-	<th>Password</th>
-	</tr>';
+    if ($result->num_rows > 0) {
+        echo '
+        <table class="table table-striped table-bordered table-hover table-condensed" align="center" style="width:50%">
+        <tr class="info">
+        <th>ID</th>
+        <th>Username</th>
+        <th>Password</th>
+        </tr>';
 
-	while ($row = $result -> fetch_assoc()) {
-	echo "
-	<tr>
-		<td>" . $row["uid"] . "</td><td>" . $row["Email"] . "</td><td>" . $row["password"] . "</td>
-	</tr>";
-	}
+        while ($row = $result->fetch_assoc()) {
+            echo "
+            <tr>
+                <td>" . $row["uid"] . "</td><td>" . $row["Email"] . "</td><td>" . $row["password"] . "</td>
+            </tr>";
+        }
 
-	echo "</table></div>";
-	} else {
-	echo "0 results";
-	}
-	}
+        echo "</table></div>";
+    } else {
+        echo "0 results";
+    }
+}
+$conn->close();
 ?>
 </div>
 </body>
 </html>
-        
-        
-        <?php
-    } else {
-        echo "<script>alert('Invalid Email and Password');</script>";
-        echo "<script>window.location.href = 'index.php';</script>";
-    }
-
-    // Close the statement and connection
-    $stmt->close();
-    $con->close();
-
-}else {
-	?> 
-	<!DOCTYPE html>
+<?php
+} else {
+    ?> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <title>Bazaar-Bid</title>
-
   <meta name="description" content="Source code generated using layoutit.com">
   <meta name="author" content="LayoutIt!">
   <link rel="icon" type="image/x-icon" href="assets/logo.svg">
@@ -349,6 +376,8 @@ else {
   </div>
 </body>
 </html>
-	<?php
+<?php
 }
 ?>
+
+
