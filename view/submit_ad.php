@@ -39,7 +39,7 @@ function buildOptions($parent, $category) {
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="discription">Discription</label>
+						<label class="control-label" for="discription">Description</label>
 						<div class="controls">
 							<textarea class="form-control" rows="3" cols="17" name="Description"></textarea>
 						</div>
