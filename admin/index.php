@@ -321,7 +321,6 @@ elseif (isset($_POST['btime'])) {
         }
 
         echo "</table></div>";
-        echo "<script>alert('Time updated successfully')</script>";
     } else {
         echo "0 results";
     }
