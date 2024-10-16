@@ -6,7 +6,7 @@
 			  <div>
 				<div class="box">
 				  <img src="assets/logo.svg" alt="logo" class="img" />
-				  <div id="logo-title">Bazaar-Bid Ahmed</div>
+				  <div id="logo-title">Bazaar-Bid</div>
 				</div>
 			  </div>
 			</div>
