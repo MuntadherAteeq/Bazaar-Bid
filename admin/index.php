@@ -177,6 +177,8 @@ if (isset($_POST['dltpr'])) {
     $id = $_POST['pid'];
 
     if (checkProductExist($id)) {
+      echo "<script>alert('Product Deleted')</script>";
+    }else {
       echo "<script>alert('Product does not exist')</script>";
     }
 
@@ -228,9 +230,11 @@ elseif (isset($_POST['dltuser'])) {
     
     echo '<div style="width=49%; float:left;"><h2>User Table</h2>';
     $id = $_POST['uid'];
+
     if (checkUserExist($id)) {
-        echo "<script>alert('User does not exist')</script>";
-        return;
+      echo "<script>alert('User Deleted')</script>";
+    }else{
+      echo "<script>alert('User does not exist')</script>";
     }
     // Delete all bids associated with the user's products
     $sql = "DELETE FROM bid WHERE pid IN (SELECT pid FROM product WHERE uid=?)";
@@ -283,7 +287,13 @@ elseif (isset($_POST['dltuser'])) {
 elseif (isset($_POST['btime'])) {
     echo '<div style="width:49%; float:left;"><h2>Product Table</h2>';
     $id = $_POST['prid'];
-    checkProductExist($id);
+    
+    if (!checkProductExist($id)) {
+      echo "<script>alert('Product does not exist')</script>";
+    }else{
+      echo "<script>alert('Time updated')</script>";
+    }
+
     $btime = $_POST['bidtime'];    
     
     $sql = "UPDATE product SET btime=? WHERE pid=?";
